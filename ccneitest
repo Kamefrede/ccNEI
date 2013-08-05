@@ -1,0 +1,75 @@
+local function truncateOrPad(str, len)
+  if #str <= len then
+    return str..string.rep(' ', len-#str)
+  end
+  return str:sub(1, len-3)..'...'
+end
+
+local function formatGrid( name, ... )
+  local str = [[
+-- Recipe: %s --
++----------+----------+----------+
+|          |          |          |
+| %s | %s | %s |
+|          |          |          |
++----------+----------+----------+
+|          |          |          |
+| %s | %s | %s |
+|          |          |          |
++----------+----------+----------+
+|          |          |          |
+| %s | %s | %s |
+|          |          |          |
++----------+----------+----------+]]
+
+  local t = {}
+
+  for i = 1, 9 do
+    if arg[i] then
+      table.insert( t, truncateOrPad(arg[i], 8) )
+    else
+      table.insert( t, string.rep(' ', 8) )
+    end
+  end
+
+  return string.format( str,
+      truncateOrPad( name, 20 ),
+      unpack( t )
+    )
+end
+
+
+
+local recipesTable = {
+  ["stone"] = "In a furnace put cobblestone on top and fuel on the bottom to get stone",
+  ["dirt"] = "Dig some grass or dirt itself to obtain it",
+  ["grass"] = "Get a Silk Touch Shovel and dig it! Or add a mod that contains recipe for it",
+  ["cobblestone"] = "Break a stone block with a pickaxe",
+  ["dispenser"] = formatGrid( "Dispenser", "Cobble", "Cobble", "Cobble", "Cobble", "Bow", "Cobble", "Redstone", "Cobble")
+}
+
+local args = {...}
+
+if #args < 1 then
+  print("Dang, thats wrong usage: recipe Name,first letter must be Capital")
+end
+
+args = table.concat(args, ' ')
+args = string.lower(args)
+
+local function listArgs()
+  print("This is the list of functions available in my program: ")
+end
+
+if args == "help" then
+  term.clear()
+  term.setCursorPos(1,1)
+  listArgs()
+   for key,value in pairs(recipesTable) do
+   print(key)
+end   
+elseif recipesTable[args] then
+  print(recipesTable[args])
+else
+  print("No recipe is stored for that item")
+end
